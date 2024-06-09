@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
-import json, os, sys
+import json
+import os
+import sys
 from datetime import datetime, timedelta
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -17,43 +19,56 @@ load_dotenv()
 
 OF_COURSE_THIS_IS_NOT_SAFE = os.environ.get("OF_COURSE_THIS_IS_NOT_SAFE")
 
-nb = ""
-FILENAME = f"notes.{nb}.json"
+FILENAME = ""
 
 def load_notes(notebook):
-    global nb
-    nb = notebook
+    global FILENAME
+    FILENAME = f"notes.{notebook}.json"
     if not os.path.exists(FILENAME):
-        return {}
+        return None
     with open(FILENAME, "r") as f:
         return json.load(f)
 
-def save_notes(notes):
+def save_notes(notes, notebook):
+    global FILENAME
+    FILENAME = f"notes.{notebook}.json"
     with open(FILENAME, "w") as f:
         json.dump(notes, f, indent=4)
+
+def check_auth(the_p):
+    if the_p != OF_COURSE_THIS_IS_NOT_SAFE:
+        return jsonify({"error": "Unauthorized "}), 401
 
 @app.route("/notes", methods=["GET"])
 def get_notes():
     the_p = request.args.get('the_p')
-    if the_p != OF_COURSE_THIS_IS_NOT_SAFE:
-        return jsonify({"error": "Unauthorized "}), 401
-    notes = load_notes(the_p)
-    save_notes(notes)
+    check_auth(the_p)
+
+    notebook = request.args.get('notebook')
+    
+    notes = load_notes(notebook)
+    if notes is None:
+        return jsonify({}), 200
+    
     return jsonify(notes)
 
 @app.route("/notes", methods=["DELETE"])
 def delete_notes():
     the_p = request.args.get('the_p')
-    if the_p != OF_COURSE_THIS_IS_NOT_SAFE:
-        return jsonify({"error": "Unauthorized "}), 401
+    check_auth(the_p)
 
     idd = request.args.get('id')
     if not idd:
         return jsonify({"error": "Invalid request"}), 400
 
-    notes = load_notes(the_p)
+    notebook = request.args.get('notebook')
+
+    notes = load_notes(notebook)
+    if notes is None:
+        return jsonify({}), 200
+
     notes["notes"] = [note for note in notes["notes"] if note["id"] != int(idd)]
-    save_notes(notes)
+    save_notes(notes, notebook)
     return jsonify(notes)
 
 @app.route("/notes", methods=["POST"])
@@ -63,17 +78,14 @@ def add_note():
         return jsonify({"error": "Invalid request"}), 400
     
     the_p = data.get("the_p") 
-    if the_p != OF_COURSE_THIS_IS_NOT_SAFE:
-        return jsonify({"error": "Unauthorized "}), 401
+    check_auth(the_p)
 
-    notes = load_notes(the_p)
-    
-    # Ensure notes_index and notes keys exist
-    if "notes_index" not in notes:
-        notes["notes_index"] = 0
-    if "notes" not in notes:
-        notes["notes"] = []
-    
+    notebook = data.get("notebook")
+
+    notes = load_notes(notebook)
+    if notes is None:
+        notes = {"notes_index": 0, "notes": []}
+
     notes["notes_index"] += 1
     note_id = notes["notes_index"]
     tags = data.get("tags")
@@ -91,7 +103,7 @@ def add_note():
         "timestamp": datetime.now().strftime("%Y%m%d%H%M")
     })
     
-    save_notes(notes)
+    save_notes(notes, notebook)
     return jsonify({"message": "Note added successfully"})
 
 if __name__ == "__main__":
