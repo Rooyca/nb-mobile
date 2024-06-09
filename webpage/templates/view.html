@@ -8,6 +8,7 @@
 </head>
 <body>
     <h2>Notes</h2>
+    <p>Click on a note to delete it.</p>
     <a href="/" class="a-tag-notes">New note ⤴</a>
     <ul id="notesList"></ul>
 
@@ -21,13 +22,27 @@
                 .then(response => response.json())
                 .then(data => {
                     notesList.innerHTML = '';
-                    console.log(data)
                     for (const index in data.notes) {
                         const note = data.notes[index];
                         const listItem = document.createElement('li');
                         listItem.textContent = `${note.content.substring(0, 100)}...`;
+                        listItem.setAttribute('data-id', note.id);
+                        listItem.style.cursor = 'pointer';
+                        listItem.addEventListener('click', deleteNote);
                         notesList.appendChild(listItem);
                     }
+                });
+        }
+
+        function deleteNote() {
+            const password = localStorage.getItem('the_p');
+            const id = this.getAttribute('data-id');
+            fetch(`http://192.168.0.112:5000/notes/${id}?the_p=${password}`, {
+                method: 'DELETE'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    fetchNotes();
                 });
         }
 
