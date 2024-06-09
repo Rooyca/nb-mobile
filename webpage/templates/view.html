@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles.css">
+    <title>Notes App</title>
+</head>
+<body>
+    <h2>Notes</h2>
+    <a href="/" class="a-tag-notes">New note ⤴</a>
+    <ul id="notesList"></ul>
+
+    <script>
+        const notesList = document.getElementById('notesList');
+
+
+        function fetchNotes() {
+            const password = localStorage.getItem('the_p');
+            fetch(`http://192.168.0.112:5000/notes?the_p=${password}`)
+                .then(response => response.json())
+                .then(data => {
+                    notesList.innerHTML = '';
+                    console.log(data)
+                    for (const index in data.notes) {
+                        const note = data.notes[index];
+                        const listItem = document.createElement('li');
+                        listItem.textContent = `${note.content.substring(0, 100)}...`;
+                        notesList.appendChild(listItem);
+                    }
+                });
+        }
+
+        fetchNotes();
+    </script>
+</body>
+</html>

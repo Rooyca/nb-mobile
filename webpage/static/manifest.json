@@ -1,0 +1,13 @@
+{
+  "name": "nb notes",
+  "short_name": "notes",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fdfdfd",
+  "icons": [
+    {
+      "src": "/static/favicon.svg",
+      "sizes": "192x192"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="/styles.css">
+
+    <title>NB - Notes & TODOS</title>
+</head>
+<body>
+    <div>
+        <h2>=== NB ===</h2>    
+        <form id="noteForm">
+            <label for="noteContent">Enter your note:</label><br>
+            <textarea id="noteContent" name="noteContent" rows="4" cols="50"></textarea><br>
+            <div class="container-elem">
+                <label for="tags">Tags (separated by comma):</label>
+                <input type="text" id="tags" name="tags" value=""><br>
+                <label for="is_bookmark">Bookmark</label>
+                <input type="checkbox" id="is_bookmark" name="is_bookmark"><br>
+                <label for="is_todo">Todo</label>
+                <input type="checkbox" id="is_todo" name="is_todo"><br>
+            </div>
+            <button type="submit" class="btn" id="add-note">ADD</button>
+        </form>
+    </div>
+
+    <hr>
+
+    <div id="div-pass">
+        <h2>Password</h2>
+        <div>
+            <input type="password" id="the_p">
+            <button id="btn-set" class="btn" onclick="setPassword(event)">SET</button>
+        </div>
+    </div>
+    <hr>
+    <a href="view" class="a-tag-notes">View Notes ⤴</a>
+
+    <script>
+        const noteForm = document.getElementById('noteForm');
+
+        function setPassword(event) {
+            event.preventDefault();
+            const password = document.getElementById('the_p').value;
+            localStorage.setItem('the_p', password);
+            alert('Password set successfully!');
+        }
+
+        function addNote(event) {
+            event.preventDefault();
+            const password = localStorage.getItem('the_p');
+
+            let noteContent = document.getElementById('noteContent').value;
+            let tags = document.getElementById('tags').value;
+            let isBookmark = document.getElementById('is_bookmark').checked;
+            let isTodo = document.getElementById('is_todo').checked;
+
+            fetch('http://192.168.0.112:5000/notes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    content: noteContent,
+                    tags: tags,
+                    is_bookmark: isBookmark,
+                    is_todo: isTodo,
+                    the_p: password,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Note added successfully');
+                document.getElementById('noteContent').value = '';
+                document.getElementById('tags').value = '';
+                document.getElementById('is_bookmark').checked = false;
+                document.getElementById('is_todo').checked = false;
+            });
+
+            return false;
+        }
+
+        noteForm.addEventListener('submit', addNote);
+        document.getElementById('the_p').value = localStorage.getItem('the_p');
+    </script>
+</body>
+</html>
