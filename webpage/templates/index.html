@@ -34,6 +34,11 @@
             <input type="password" id="the_p">
             <button id="btn-set" class="btn" onclick="setPassword(event)">SET</button>
         </div>
+        <h2>Notebook</h2>
+        <div>
+            <input type="text" id="notebook">
+            <button id="btn-set" class="btn" onclick="setNotebook(event)">SET</button>
+        </div>
     </div>
     <hr>
     <a href="view" class="a-tag-notes">View Notes ⤴</a>
@@ -48,9 +53,17 @@
             alert('Password set successfully!');
         }
 
+        function setNotebook(event) {
+            event.preventDefault();
+            const notebook = document.getElementById('notebook').value;
+            localStorage.setItem('notebook', notebook);
+            alert('Notebook set successfully!');
+        }
+
         function addNote(event) {
             event.preventDefault();
             const password = localStorage.getItem('the_p');
+            const nb = localStorage.getItem('notebook');
 
             let noteContent = document.getElementById('noteContent').value;
             let tags = document.getElementById('tags').value;
@@ -68,6 +81,7 @@
                     is_bookmark: isBookmark,
                     is_todo: isTodo,
                     the_p: password,
+                    notebook: nb,
                 }),
             })
             .then(response => response.json())
@@ -84,6 +98,7 @@
 
         noteForm.addEventListener('submit', addNote);
         document.getElementById('the_p').value = localStorage.getItem('the_p');
+        document.getElementById('notebook').value = localStorage.getItem('notebook');
     </script>
 </body>
 </html>

@@ -18,7 +18,8 @@
 
         function fetchNotes() {
             const password = localStorage.getItem('the_p');
-            fetch(`http://192.168.0.112:5000/notes?the_p=${password}`)
+            const notebook = localStorage.getItem('notebook');
+            fetch(`http://192.168.0.112:5000/notes?the_p=${password}&notebook=${notebook}`)
                 .then(response => response.json())
                 .then(data => {
                     notesList.innerHTML = '';
@@ -36,8 +37,9 @@
 
         function deleteNote() {
             const password = localStorage.getItem('the_p');
+            const notebook = localStorage.getItem('notebook');
             const id = this.getAttribute('data-id');
-            fetch(`http://192.168.0.112:5000/notes?id=${id}&the_p=${password}`, {
+            fetch(`http://192.168.0.112:5000/notes?id=${id}&notebook=${notebook}&the_p=${password}`, {
                 method: 'DELETE'
             })
                 .then(response => response.json())
