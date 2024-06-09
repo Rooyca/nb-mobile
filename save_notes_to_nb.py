@@ -6,7 +6,10 @@ def get_notes():
 	response = requests.get(URL, params={"the_p": "@3rooycA -1"})
 	return response.json()
 
-notes = get_notes()["notes"]
+try:
+	notes = get_notes()["notes"]
+except:
+	exit()
 
 if not notes:
 	exit()
@@ -37,14 +40,14 @@ for note in notes:
 
 	if is_todo:
 		if tags:
-			subprocess.run(["nb", "todo", "a", content, "--tags", tags])
+			subprocess.run(["nb", "todo", "a", "--description", content, "--tags", tags])
 		else:
-			subprocess.run(["nb", "todo", "a", content])
+			subprocess.run(["nb", "todo", "a", "--description", content])
 	else:
 		if tags:
-			subprocess.run(["nb", "a", content, "--tags", tags])
+			subprocess.run(["nb", "a", "--description", content, "--tags", tags])
 		else:
-			subprocess.run(["nb", "a", content])
+			subprocess.run(["nb", "a", "--description", content])
 
 	para = {"the_p": "@3rooycA -1", "id": str(idd)}
 	response = requests.delete(URL, params=para)
