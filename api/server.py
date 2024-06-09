@@ -15,34 +15,29 @@ os.chdir(script_dir)
 
 load_dotenv()
 
-DATA_FILE = os.environ.get("FILENAME", "notes.json")
 OF_COURSE_THIS_IS_NOT_SAFE = os.environ.get("OF_COURSE_THIS_IS_NOT_SAFE")
 
-def load_notes():
-    if not os.path.exists(DATA_FILE):
+nb = ""
+FILENAME = f"notes.{nb}.json"
+
+def load_notes(notebook):
+    global nb
+    nb = notebook
+    if not os.path.exists(FILENAME):
         return {}
-    with open(DATA_FILE, "r") as f:
+    with open(FILENAME, "r") as f:
         return json.load(f)
 
 def save_notes(notes):
-    with open(DATA_FILE, "w") as f:
+    with open(FILENAME, "w") as f:
         json.dump(notes, f, indent=4)
-
-def get_expire_after(data):
-    expire_after_str = data.get("expire_after")
-    if expire_after_str:
-        try:
-            return int(expire_after_str)
-        except ValueError:
-            pass
-    return 1
 
 @app.route("/notes", methods=["GET"])
 def get_notes():
     the_p = request.args.get('the_p')
     if the_p != OF_COURSE_THIS_IS_NOT_SAFE:
         return jsonify({"error": "Unauthorized "}), 401
-    notes = load_notes()
+    notes = load_notes(the_p)
     save_notes(notes)
     return jsonify(notes)
 
@@ -56,7 +51,7 @@ def delete_notes():
     if not idd:
         return jsonify({"error": "Invalid request"}), 400
 
-    notes = load_notes()
+    notes = load_notes(the_p)
     notes["notes"] = [note for note in notes["notes"] if note["id"] != int(idd)]
     save_notes(notes)
     return jsonify(notes)
@@ -64,14 +59,14 @@ def delete_notes():
 @app.route("/notes", methods=["POST"])
 def add_note():
     data = request.json
-
     if not data:
         return jsonify({"error": "Invalid request"}), 400
-
-    if data.get("the_p") != OF_COURSE_THIS_IS_NOT_SAFE:
+    
+    the_p = data.get("the_p") 
+    if the_p != OF_COURSE_THIS_IS_NOT_SAFE:
         return jsonify({"error": "Unauthorized "}), 401
 
-    notes = load_notes()
+    notes = load_notes(the_p)
     
     # Ensure notes_index and notes keys exist
     if "notes_index" not in notes:
