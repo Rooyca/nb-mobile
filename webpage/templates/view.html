@@ -37,7 +37,7 @@
         function deleteNote() {
             const password = localStorage.getItem('the_p');
             const id = this.getAttribute('data-id');
-            fetch(`http://192.168.0.112:5000/notes/${id}?the_p=${password}`, {
+            fetch(`http://192.168.0.112:5000/notes?id=${id}&the_p=${password}`, {
                 method: 'DELETE'
             })
                 .then(response => response.json())
