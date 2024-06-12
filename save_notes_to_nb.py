@@ -2,8 +2,11 @@ import requests, json, subprocess, re
 
 URL = "http://192.168.0.112:5000/notes"
 
+PASSWORD = "@3rooycA -1"
+NOTEBOOK = "acustic"
+
 def get_notes():
-	response = requests.get(URL, params={"the_p": "@3rooycA -1"})
+	response = requests.get(URL, params={"the_p": PASSWORD, "notebook": NOTEBOOK})
 	return response.json()
 
 try:
@@ -40,16 +43,16 @@ for note in notes:
 
 	if is_todo:
 		if tags:
-			subprocess.run(["nb", "todo", "a", "--description", content, "--tags", tags])
+			subprocess.run(["nb", "todo", "a", content, "--tags", tags])
 		else:
-			subprocess.run(["nb", "todo", "a", "--description", content])
+			subprocess.run(["nb", "todo", "a", content])
 	else:
 		if tags:
-			subprocess.run(["nb", "a", "--description", content, "--tags", tags])
+			subprocess.run(["nb", "a", content, "--tags", tags])
 		else:
-			subprocess.run(["nb", "a", "--description", content])
+			subprocess.run(["nb", "a", content])
 
-	para = {"the_p": "@3rooycA -1", "id": str(idd)}
+	para = {"the_p": PASSWORD, "id": str(idd), "notebook": NOTEBOOK}
 	response = requests.delete(URL, params=para)
 	print("="*50)
 

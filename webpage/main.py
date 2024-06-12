@@ -1,8 +1,11 @@
 from flask import Flask, render_template, request, jsonify, send_file
-import requests
+import requests, os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
-API_URL = "http://192.168.0.112:5000"
+API_URL = os.getenv("URL")
 
 @app.route('/manifest.json')
 def serve_manifest():
@@ -14,11 +17,11 @@ def serve_styles():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", IP=API_URL)
 
 @app.route("/view")
 def view():
-    return render_template("view.html")
+    return render_template("view.html", IP=API_URL)
 
 @app.route("/add_note", methods=["POST"])
 def add_note():
