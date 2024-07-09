@@ -1,6 +1,11 @@
 import requests, json, subprocess, re
 
-URL = "http://192.168.0.112:5000/notes"
+from dotenv import load_dotenv
+load_dotenv()
+
+IP = os.getenv("IP")
+
+URL = IP+"/notes"
 
 PASSWORD = "@3rooycA -1"
 NOTEBOOK = "acustic"
