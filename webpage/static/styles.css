@@ -64,6 +64,10 @@ textarea {
 	  box-sizing: border-box;
 }
 
+input, textarea {
+	background-color: #2b2a33;
+}
+
 @media screen and (max-width: 600px) {
 	.small {
 		font-size: 16px;
