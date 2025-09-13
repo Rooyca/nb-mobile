@@ -1,4 +1,4 @@
-import requests, json, subprocess, re
+import requests, subprocess, re
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -7,8 +7,8 @@ IP = os.getenv("IP")
 
 URL = IP+"/notes"
 
-PASSWORD = "@3rooycA -1"
-NOTEBOOK = "acustic"
+PASSWORD = ""
+NOTEBOOK = ""
 
 def get_notes():
 	response = requests.get(URL, params={"the_p": PASSWORD, "notebook": NOTEBOOK})

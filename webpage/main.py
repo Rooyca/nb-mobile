@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify, send_file
-import requests, os
+import requests
+import os
 from dotenv import load_dotenv
 
 load_dotenv()
